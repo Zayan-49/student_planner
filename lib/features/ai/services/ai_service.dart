@@ -14,7 +14,7 @@ class AiService {
 	}
 
 	final uri = Uri.parse(
-	  'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=$apiKey',
+		'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=$apiKey',
 	);
 
 	final body = {
@@ -36,7 +36,8 @@ class AiService {
 		headers: const {'Content-Type': 'application/json'},
 		body: jsonEncode(body),
 	  );
-
+		print("📡 Status Code: ${response.statusCode}");
+		print("📦 Response Body: ${response.body}");
 	  if (response.statusCode < 200 || response.statusCode >= 300) {
 		return _fallbackMessage;
 	  }
@@ -59,6 +60,7 @@ class AiService {
 
 	  return text.trim();
 	} catch (_) {
+
 	  return _fallbackMessage;
 	}
   }

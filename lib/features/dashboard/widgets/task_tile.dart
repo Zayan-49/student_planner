@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:student_planner/core/constants/app_colors.dart';
+import 'package:student_planner/theme/app_theme.dart';
 
 class TaskTile extends StatelessWidget {
   const TaskTile({
@@ -34,11 +34,11 @@ class TaskTile extends StatelessWidget {
           decoration: isCompleted
               ? TextDecoration.lineThrough
               : TextDecoration.none,
-          color: isCompleted ? AppColors.textSecondary : AppColors.textPrimary,
+          color: isCompleted ? AppTheme.textSecondary : AppTheme.textPrimary,
         ),
       ),
       subtitle: Padding(
-        padding: const EdgeInsets.only(top: 4),
+        padding: const EdgeInsets.only(top: 6),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -47,7 +47,10 @@ class TaskTile extends StatelessWidget {
               Text(
                 description,
                 style: textTheme.bodySmall?.copyWith(
-                  color: AppColors.textSecondary,
+                  color: AppTheme.textSecondary,
+                  decoration: isCompleted
+                      ? TextDecoration.lineThrough
+                      : TextDecoration.none,
                 ),
               ),
               const SizedBox(height: 4),
@@ -55,8 +58,8 @@ class TaskTile extends StatelessWidget {
             Text(
               statusText,
               style: textTheme.bodyMedium?.copyWith(
-                color: isCompleted ? AppColors.success : AppColors.warning,
-                fontWeight: FontWeight.w500,
+                color: isCompleted ? AppTheme.secondary : const Color(0xFFF59E0B),
+                fontWeight: FontWeight.w600,
               ),
             ),
           ],
@@ -68,16 +71,17 @@ class TaskTile extends StatelessWidget {
           Checkbox(
             value: isChecked,
             onChanged: onChanged,
-            activeColor: AppColors.primary,
+            activeColor: AppTheme.primary,
+            checkColor: Colors.white,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(6),
+              borderRadius: BorderRadius.circular(10),
             ),
-            side: const BorderSide(color: Color(0xFFCBD5E1), width: 1.2),
+            side: const BorderSide(color: Color(0x66FFFFFF), width: 1.2),
           ),
           IconButton(
             onPressed: onDelete,
             icon: const Icon(Icons.delete_outline_rounded),
-            color: AppColors.textSecondary,
+            color: AppTheme.textSecondary,
             tooltip: 'Delete task',
           ),
         ],

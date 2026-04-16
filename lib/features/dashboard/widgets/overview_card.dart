@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:student_planner/core/constants/app_colors.dart';
 import 'package:student_planner/features/dashboard/widgets/overview_card_data.dart';
+import 'package:student_planner/theme/app_theme.dart';
+import 'package:student_planner/theme/widgets/glass_container.dart';
 
 class OverviewCard extends StatelessWidget {
   const OverviewCard({required this.data, super.key});
@@ -11,25 +12,15 @@ class OverviewCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
 
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: AppColors.card,
-        borderRadius: BorderRadius.circular(18),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x14000000),
-            blurRadius: 18,
-            offset: Offset(0, 8),
-          ),
-        ],
-      ),
+    return GlassContainer(
+      borderRadius: 20,
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 14),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            width: 38,
-            height: 38,
+            width: 40,
+            height: 40,
             decoration: BoxDecoration(
               color: data.iconBackgroundColor,
               shape: BoxShape.circle,
@@ -37,16 +28,23 @@ class OverviewCard extends StatelessWidget {
             alignment: Alignment.center,
             child: Icon(data.icon, color: data.iconColor, size: 20),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 14),
           Text(
             data.value,
-            style: textTheme.headlineMedium?.copyWith(fontSize: 28),
+            textAlign: TextAlign.center,
+            style: textTheme.headlineMedium?.copyWith(
+              fontSize: 28,
+              color: AppTheme.textPrimary,
+            ),
           ),
           const SizedBox(height: 2),
-          Text(data.label, style: textTheme.bodyMedium),
+          Text(
+            data.label,
+            textAlign: TextAlign.center,
+            style: textTheme.bodyMedium?.copyWith(color: AppTheme.textSecondary),
+          ),
         ],
       ),
     );
   }
 }
-

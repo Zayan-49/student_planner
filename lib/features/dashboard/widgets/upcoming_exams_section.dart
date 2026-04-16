@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:student_planner/data/services/exam_hive_service.dart';
-import 'package:student_planner/features/exams/models/exam_item.dart';
 import 'package:student_planner/features/dashboard/widgets/exam_card.dart';
+import 'package:student_planner/features/exams/models/exam_item.dart';
+import 'package:student_planner/theme/app_theme.dart';
+import 'package:student_planner/theme/widgets/glass_container.dart';
 
 class UpcomingExamsSection extends StatelessWidget {
   const UpcomingExamsSection({super.key});
@@ -12,15 +14,14 @@ class UpcomingExamsSection extends StatelessWidget {
     final examService = ExamHiveService.instance;
 
     if (!examService.isInitialized) {
-      return const SizedBox(height: 178, child: _EmptyUpcomingExams());
+      return const SizedBox(height: 146, child: _EmptyUpcomingExams());
     }
 
     return SizedBox(
-      height: 130,
-
+      height: 146,
       child: ValueListenableBuilder<Box<dynamic>>(
         valueListenable: examService.listenable(),
-        builder: (context, _, __) {
+        builder: (context, _, child) {
           final records = examService
               .getSortedExamRecords()
               .where((record) => daysUntilExam(record.exam.date) >= 0)
@@ -33,7 +34,7 @@ class UpcomingExamsSection extends StatelessWidget {
           return ListView.separated(
             scrollDirection: Axis.horizontal,
             itemCount: records.length,
-            separatorBuilder: (_, __) => const SizedBox(width: 12),
+            separatorBuilder: (_, index) => const SizedBox(width: 12),
             itemBuilder: (context, index) {
               final exam = records[index].exam;
               final daysLeft = daysUntilExam(exam.date);
@@ -86,6 +87,14 @@ class _EmptyUpcomingExams extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(child: Text('No upcoming exams'));
+    return const GlassContainer(
+      borderRadius: 20,
+      child: Center(
+        child: Text(
+          'No upcoming exams',
+          style: TextStyle(color: AppTheme.textSecondary),
+        ),
+      ),
+    );
   }
 }

@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:student_planner/core/constants/app_colors.dart';
 import 'package:student_planner/data/models/task.dart';
 import 'package:student_planner/data/services/task_hive_service.dart';
+import 'package:student_planner/theme/app_theme.dart';
+import 'package:student_planner/theme/widgets/glass_container.dart';
+import 'package:student_planner/theme/widgets/gradient_background.dart';
 
 class AddTaskScreen extends StatefulWidget {
   const AddTaskScreen({super.key});
@@ -109,82 +112,100 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: const Text('Add Task'),
-        centerTitle: false,
-        backgroundColor: AppColors.background,
-        elevation: 0,
-      ),
-      body: SafeArea(
-        child: Form(
-          key: _formKey,
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                TextFormField(
-                  controller: _titleController,
-                  textInputAction: TextInputAction.next,
-                  decoration: _inputDecoration(
-                    hintText: 'Task Title',
-                    icon: Icons.title_rounded,
-                  ),
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'Task title is required';
-                    }
-                    return null;
-                  },
+    return GradientBackground(
+      child: Scaffold(
+        extendBodyBehindAppBar: true,
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          title: const Text('Add Task'),
+      
+          backgroundColor: Colors.transparent,
+          surfaceTintColor: Colors.transparent,
+          elevation: 0,
+          scrolledUnderElevation: 0,
+          foregroundColor: AppTheme.textPrimary,
+        ),
+        body:  SafeArea(
+      
+            child: Form(
+              key: _formKey,
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    GlassContainer(
+                      borderRadius: 20,
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        children: [
+                          TextFormField(
+                            controller: _titleController,
+                            textInputAction: TextInputAction.next,
+                            style: const TextStyle(color: AppTheme.textPrimary),
+                            decoration: _inputDecoration(
+                              hintText: 'Task Title',
+                              icon: Icons.title_rounded,
+                            ),
+                            validator: (value) {
+                              if (value == null || value.trim().isEmpty) {
+                                return 'Task title is required';
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 14),
+                          TextFormField(
+                            controller: _descriptionController,
+                            maxLines: 4,
+                            minLines: 3,
+                            style: const TextStyle(color: AppTheme.textPrimary),
+                            decoration: _inputDecoration(
+                              hintText: 'Description (optional)',
+                              icon: Icons.notes_rounded,
+                            ),
+                          ),
+                          const SizedBox(height: 14),
+                          _PickerField(
+                            icon: Icons.calendar_today_rounded,
+                            text: _formattedDate,
+                            onTap: _pickDate,
+                          ),
+                          const SizedBox(height: 14),
+                          _PickerField(
+                            icon: Icons.access_time_rounded,
+                            text: _formattedTime,
+                            onTap: _pickTime,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 14),
-                TextFormField(
-                  controller: _descriptionController,
-                  maxLines: 4,
-                  minLines: 3,
-                  decoration: _inputDecoration(
-                    hintText: 'Description (optional)',
-                    icon: Icons.notes_rounded,
-                  ),
-                ),
-                const SizedBox(height: 14),
-                _PickerField(
-                  icon: Icons.calendar_today_rounded,
-                  text: _formattedDate,
-                  onTap: _pickDate,
-                ),
-                const SizedBox(height: 14),
-                _PickerField(
-                  icon: Icons.access_time_rounded,
-                  text: _formattedTime,
-                  onTap: _pickTime,
-                ),
-              ],
+              ),
             ),
           ),
-        ),
-      ),
-      bottomNavigationBar: SafeArea(
-        minimum: const EdgeInsets.all(16),
-        child: SizedBox(
-          width: double.infinity,
-          height: 52,
-          child: ElevatedButton(
-            onPressed: _saveTask,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primary,
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
+        
+        bottomNavigationBar: SafeArea(
+          minimum: const EdgeInsets.all(16),
+          child: SizedBox(
+            width: double.infinity,
+            height: 52,
+            child: ElevatedButton(
+              onPressed: _saveTask,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                textStyle: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
-              textStyle: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              ),
+              child: const Text('Save Task'),
             ),
-            child: const Text('Save Task'),
           ),
         ),
       ),
@@ -197,17 +218,18 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   }) {
     return InputDecoration(
       hintText: hintText,
-      prefixIcon: Icon(icon, color: AppColors.textSecondary),
+      hintStyle: const TextStyle(color: AppTheme.textSecondary),
+      prefixIcon: Icon(icon, color: AppTheme.textSecondary),
       filled: true,
-      fillColor: AppColors.card,
+      fillColor: AppTheme.glass,
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
-        borderSide: BorderSide.none,
+        borderSide: const BorderSide(color: AppTheme.border),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
-        borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
+        borderSide: const BorderSide(color: AppTheme.border),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
@@ -240,34 +262,37 @@ class _PickerField extends StatelessWidget {
   Widget build(BuildContext context) {
     final isPlaceholder = text.startsWith('Select');
 
-    return Material(
-      color: AppColors.card,
-      borderRadius: BorderRadius.circular(16),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(16),
-        onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: const Color(0xFFE5E7EB)),
-          ),
-          child: Row(
-            children: [
-              Icon(icon, color: AppColors.textSecondary),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Text(
-                  text,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: isPlaceholder
-                        ? AppColors.textSecondary
-                        : AppColors.textPrimary,
-                    fontWeight: FontWeight.w500,
+    return GlassContainer(
+      borderRadius: 16,
+      padding: EdgeInsets.zero,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(16),
+          onTap: onTap,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: AppTheme.border),
+            ),
+            child: Row(
+              children: [
+                Icon(icon, color: AppTheme.textSecondary),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    text,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: isPlaceholder
+                          ? AppTheme.textSecondary
+                          : AppTheme.textPrimary,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

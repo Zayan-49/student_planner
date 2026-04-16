@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:student_planner/core/constants/app_colors.dart';
 import 'package:student_planner/data/models/task.dart';
 import 'package:student_planner/data/services/task_hive_service.dart';
 import 'package:student_planner/features/dashboard/widgets/task_tile.dart';
+import 'package:student_planner/theme/app_theme.dart';
+import 'package:student_planner/theme/widgets/glass_container.dart';
 
 class TodaysTasksSection extends StatelessWidget {
   const TodaysTasksSection({super.key});
@@ -36,31 +37,20 @@ class TodaysTasksSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final taskService = TaskHiveService.instance;
 
-    return Container(
-      width: double.infinity,
+    return GlassContainer(
+      borderRadius: 20,
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColors.card,
-        borderRadius: BorderRadius.circular(18),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x12000000),
-            blurRadius: 16,
-            offset: Offset(0, 8),
-          ),
-        ],
-      ),
       child: ValueListenableBuilder<Box<Task>>(
         valueListenable: taskService.listenable(),
-        builder: (context, _, __) {
+        builder: (context, _, child) {
           final todaysTasks = taskService.getTasksForDay(DateTime.now());
 
           if (todaysTasks.isEmpty) {
             return Text(
               'No tasks for today yet',
-              style: Theme.of(
-                context,
-              ).textTheme.bodyMedium?.copyWith(color: AppColors.textSecondary),
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: AppTheme.textSecondary,
+              ),
             );
           }
 
@@ -95,7 +85,7 @@ class TodaysTasksSection extends StatelessWidget {
                 ),
                 if (i != todaysTasks.length - 1) ...[
                   const SizedBox(height: 4),
-                  const Divider(height: 16, color: Color(0xFFE5E7EB)),
+                  const Divider(height: 16, color: Color(0x33FFFFFF)),
                 ],
               ],
             ],

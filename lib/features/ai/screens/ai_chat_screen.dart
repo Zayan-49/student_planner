@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:student_planner/core/constants/app_colors.dart';
 import 'package:student_planner/features/ai/models/message_model.dart';
 import 'package:student_planner/features/ai/services/ai_service.dart';
+import 'package:student_planner/theme/widgets/glass_container.dart';
+import 'package:student_planner/theme/widgets/gradient_background.dart';
 
 class AiChatScreen extends StatefulWidget {
   const AiChatScreen({super.key});
@@ -85,38 +87,44 @@ class _AiChatScreenState extends State<AiChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      extendBodyBehindAppBar: true,
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
         title: const Text('AI Study Assistant'),
-        backgroundColor: AppColors.background,
+        backgroundColor: Colors.transparent,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
+        scrolledUnderElevation: 0,
+        foregroundColor: AppColors.textPrimary,
       ),
-      body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: _messages.isEmpty
-                  ? const _EmptyChatState()
-                  : ListView.builder(
-                      controller: _scrollController,
-                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-                      itemCount: _messages.length + (_isTyping ? 1 : 0),
-                      itemBuilder: (context, index) {
-                        if (_isTyping && index == _messages.length) {
-                          return const _TypingBubble();
-                        }
+      body: GradientBackground(
+        child: SafeArea(
+          child: Column(
+            children: [
+              Expanded(
+                child: _messages.isEmpty
+                    ? const _EmptyChatState()
+                    : ListView.builder(
+                        controller: _scrollController,
+                        padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                        itemCount: _messages.length + (_isTyping ? 1 : 0),
+                        itemBuilder: (context, index) {
+                          if (_isTyping && index == _messages.length) {
+                            return const _TypingBubble();
+                          }
 
-                        final message = _messages[index];
-                        return _MessageBubble(message: message);
-                      },
-                    ),
-            ),
-            _ChatInputBar(
-              controller: _messageController,
-              onSend: _sendMessage,
-              canSend: _canSend,
-            ),
-          ],
+                          final message = _messages[index];
+                          return _MessageBubble(message: message);
+                        },
+                      ),
+              ),
+              _ChatInputBar(
+                controller: _messageController,
+                onSend: _sendMessage,
+                canSend: _canSend,
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -136,48 +144,47 @@ class _ChatInputBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-      decoration: BoxDecoration(
-        color: AppColors.card,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x14000000),
-            blurRadius: 14,
-            offset: Offset(0, 6),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: TextField(
-              controller: controller,
-              maxLines: 4,
-              minLines: 1,
-              textInputAction: TextInputAction.newline,
-              decoration: const InputDecoration(
-                hintText: 'Ask anything about your studies...',
-                border: InputBorder.none,
-                contentPadding: EdgeInsets.symmetric(horizontal: 12),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+      child: GlassContainer(
+        borderRadius: 24,
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        child: Row(
+          children: [
+            Expanded(
+              child: TextField(
+                controller: controller,
+                maxLines: 4,
+                minLines: 1,
+                textInputAction: TextInputAction.newline,
+                cursorColor: AppColors.primary,
+                style: const TextStyle(
+                  color: AppColors.textPrimary,
+                  fontSize: 14,
+                ),
+                decoration: const InputDecoration(
+                  hintText: 'Ask anything about your studies...',
+                  hintStyle: TextStyle(color: AppColors.textSecondary),
+                  border: InputBorder.none,
+                  contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                ),
               ),
             ),
-          ),
-          const SizedBox(width: 8),
-          IconButton(
-            onPressed: canSend ? () => onSend() : null,
-            style: IconButton.styleFrom(
-              backgroundColor: canSend
-                  ? AppColors.primary
-                  : const Color(0xFFE5E7EB),
-              foregroundColor: Colors.white,
+            const SizedBox(width: 8),
+            IconButton(
+              onPressed: canSend ? () => onSend() : null,
+              style: IconButton.styleFrom(
+                backgroundColor: canSend
+                    ? AppColors.primary
+                    : const Color.fromRGBO(255, 255, 255, 0.12),
+                foregroundColor: Colors.white,
+                disabledBackgroundColor: const Color.fromRGBO(255, 255, 255, 0.12),
+              ),
+              icon: const Icon(Icons.send_rounded),
+              tooltip: 'Send',
             ),
-            icon: const Icon(Icons.send_rounded),
-            tooltip: 'Send',
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -194,21 +201,29 @@ class _MessageBubble extends StatelessWidget {
 
     return Align(
       alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
-      child: Container(
+      child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 300),
-        margin: const EdgeInsets.only(bottom: 10),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-        decoration: BoxDecoration(
-          color: isUser ? AppColors.primary : const Color(0xFFF3F4F6),
-          borderRadius: BorderRadius.circular(18),
-        ),
-        child: Text(
-          message.text,
-          style: TextStyle(
-            color: isUser ? Colors.white : AppColors.textPrimary,
-            fontSize: 14,
-            height: 1.4,
-            fontWeight: FontWeight.w500,
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: 10),
+          child: GlassContainer(
+            borderRadius: 18,
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            backgroundColor: isUser
+                ? const Color.fromRGBO(16, 185, 129, 0.20)
+                : const Color.fromRGBO(15, 23, 42, 0.46),
+            borderColor: isUser
+                ? const Color.fromRGBO(52, 211, 153, 0.30)
+                : const Color.fromRGBO(255, 255, 255, 0.12),
+            blurSigma: 14,
+            child: Text(
+              message.text,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 14,
+                height: 1.4,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
           ),
         ),
       ),
@@ -229,7 +244,7 @@ class _TypingBubble extends StatelessWidget {
           child: Text(
             'AI is typing...',
             style: TextStyle(
-              color: AppColors.textSecondary,
+              color: Colors.white70,
               fontSize: 13,
               fontWeight: FontWeight.w500,
             ),
@@ -247,15 +262,12 @@ class _BubbleFrame extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: const Color(0xFFF3F4F6),
-        borderRadius: BorderRadius.circular(18),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-        child: child,
-      ),
+    return GlassContainer(
+      borderRadius: 18,
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      backgroundColor: const Color.fromRGBO(15, 23, 42, 0.46),
+      borderColor: const Color.fromRGBO(255, 255, 255, 0.12),
+      child: child,
     );
   }
 }
@@ -270,38 +282,46 @@ class _EmptyChatState extends StatelessWidget {
     return Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 70,
-              height: 70,
-              decoration: const BoxDecoration(
-                color: Color(0x1A4F46E5),
-                shape: BoxShape.circle,
+        child: GlassContainer(
+          borderRadius: 28,
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 28),
+          backgroundColor: const Color.fromRGBO(15, 23, 42, 0.34),
+          borderColor: const Color.fromRGBO(255, 255, 255, 0.12),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 70,
+                height: 70,
+                decoration: const BoxDecoration(
+                  color: Color.fromRGBO(16, 185, 129, 0.18),
+                  shape: BoxShape.circle,
+                ),
+                alignment: Alignment.center,
+                child: const Icon(
+                  Icons.auto_awesome_rounded,
+                  color: AppColors.primary,
+                  size: 32,
+                ),
               ),
-              alignment: Alignment.center,
-              child: const Icon(
-                Icons.auto_awesome_rounded,
-                color: AppColors.primary,
-                size: 32,
+              const SizedBox(height: 14),
+              Text(
+                'Ask me anything',
+                style: textTheme.titleMedium?.copyWith(
+                  color: AppColors.textPrimary,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
-            ),
-            const SizedBox(height: 14),
-            Text(
-              'Ask me anything',
-              style: textTheme.titleMedium?.copyWith(
-                color: AppColors.textPrimary,
-                fontWeight: FontWeight.w700,
+              const SizedBox(height: 6),
+              Text(
+                'Get simple explanations, study tips, and quick help for your subjects.',
+                textAlign: TextAlign.center,
+                style: textTheme.bodyMedium?.copyWith(
+                  color: AppColors.textSecondary,
+                ),
               ),
-            ),
-            const SizedBox(height: 6),
-            Text(
-              'Get simple explanations, study tips, and quick help for your subjects.',
-              textAlign: TextAlign.center,
-              style: textTheme.bodyMedium,
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

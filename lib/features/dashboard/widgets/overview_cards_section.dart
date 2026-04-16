@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:student_planner/core/constants/app_colors.dart';
 import 'package:student_planner/data/models/task.dart';
 import 'package:student_planner/data/services/task_hive_service.dart';
 import 'package:student_planner/features/dashboard/widgets/overview_card.dart';
 import 'package:student_planner/features/dashboard/widgets/overview_card_data.dart';
+import 'package:student_planner/theme/app_theme.dart';
 
 class OverviewCardsSection extends StatelessWidget {
   const OverviewCardsSection({super.key});
@@ -15,26 +15,26 @@ class OverviewCardsSection extends StatelessWidget {
 
     return ValueListenableBuilder<Box<Task>>(
       valueListenable: taskService.listenable(),
-      builder: (context, _, __) {
+      builder: (context, _, child) {
         final cards = [
           OverviewCardData(
             icon: Icons.check_circle_outline_rounded,
-            iconBackgroundColor: const Color(0x1A22C55E),
-            iconColor: AppColors.success,
+            iconBackgroundColor: const Color(0x3322C55E),
+            iconColor: AppTheme.secondary,
             value: taskService.getTodayTaskCount().toString(),
             label: 'Tasks Today',
           ),
           OverviewCardData(
             icon: Icons.task_alt_rounded,
-            iconBackgroundColor: const Color(0x1A4F46E5),
-            iconColor: AppColors.primary,
+            iconBackgroundColor: const Color(0x3310B981),
+            iconColor: AppTheme.primary,
             value: taskService.getCompletedTaskCount().toString(),
             label: 'Completed',
           ),
-          const OverviewCardData(
+           OverviewCardData(
             icon: Icons.calendar_today_rounded,
-            iconBackgroundColor: Color(0x1AF59E0B),
-            iconColor: AppColors.warning,
+            iconBackgroundColor: Color(0x33F59E0B),
+            iconColor: Color(0xFFF59E0B),
             value: '2',
             label: 'Upcoming Exams',
           ),

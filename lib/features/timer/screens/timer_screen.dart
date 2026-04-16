@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:student_planner/core/constants/app_colors.dart';
+import 'package:student_planner/theme/app_theme.dart';
+import 'package:student_planner/theme/widgets/glass_container.dart';
+import 'package:student_planner/theme/widgets/gradient_background.dart';
 
 enum TimerMode {
   focus,
@@ -127,191 +129,252 @@ class _TimerScreenState extends State<TimerScreen> {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final Color activeColor = _isCompleted ? AppColors.success : AppColors.primary;
+    final ringColor = _isCompleted ? AppTheme.secondary : AppTheme.primary;
 
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: const Text('Focus Timer'),
-        backgroundColor: AppColors.background,
-        elevation: 0,
-      ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SegmentedButton<TimerMode>(
-                showSelectedIcon: false,
-                selected: <TimerMode>{_selectedMode},
-                onSelectionChanged: (selection) {
-                  _switchMode(selection.first);
-                },
-                segments: <ButtonSegment<TimerMode>>[
-                  ButtonSegment<TimerMode>(
-                    value: TimerMode.focus,
-                    label: Text(_modeLabel(TimerMode.focus)),
-                  ),
-                  ButtonSegment<TimerMode>(
-                    value: TimerMode.shortBreak,
-                    label: Text(_modeLabel(TimerMode.shortBreak)),
-                  ),
-                  ButtonSegment<TimerMode>(
-                    value: TimerMode.longBreak,
-                    label: Text(_modeLabel(TimerMode.longBreak)),
-                  ),
-                ],
-                style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.resolveWith<Color?>((states) {
-                    if (states.contains(WidgetState.selected)) {
-                      return const Color(0x1A4F46E5);
-                    }
-                    return Colors.white;
-                  }),
-                  foregroundColor: WidgetStateProperty.resolveWith<Color?>((states) {
-                    if (states.contains(WidgetState.selected)) {
-                      return AppColors.primary;
-                    }
-                    return AppColors.textSecondary;
-                  }),
-                  side: const WidgetStatePropertyAll(
-                    BorderSide(color: Color(0xFFE5E7EB)),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 30),
-              AnimatedContainer(
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.easeOut,
-                width: 280,
-                height: 280,
-                padding: const EdgeInsets.all(22),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Color(0x12000000),
-                      blurRadius: 24,
-                      offset: Offset(0, 10),
-                    ),
-                  ],
-                ),
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    TweenAnimationBuilder<double>(
-                      tween: Tween<double>(begin: 0, end: _progress),
-                      duration: const Duration(milliseconds: 350),
-                      curve: Curves.easeOut,
-                      builder: (context, value, _) {
-                        return CircularProgressIndicator(
-                          value: value,
-                          strokeWidth: 12,
-                          strokeCap: StrokeCap.round,
-                          color: activeColor,
-                          backgroundColor: const Color(0xFFE5E7EB),
-                        );
-                      },
-                    ),
-                    Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          _formatTime(_remainingSeconds),
-                          style: textTheme.headlineMedium?.copyWith(
-                            fontSize: 52,
-                            fontWeight: FontWeight.w800,
-                            color: AppColors.textPrimary,
-                            letterSpacing: 1,
+    return GradientBackground(
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          title: const Text('Focus Timer'),
+          centerTitle: false,
+          backgroundColor: Colors.transparent,
+          surfaceTintColor: Colors.transparent,
+          elevation: 0,
+          scrolledUnderElevation: 0,
+          foregroundColor: AppTheme.textPrimary,
+        ),
+        body:  SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              child: Column(
+                children: [
+
+                  const SizedBox(height: 18),
+                  GlassContainer(
+                    borderRadius: 24,
+                    padding: const EdgeInsets.all(8),
+                    child: SegmentedButton<TimerMode>(
+                      showSelectedIcon: false,
+                      selected: <TimerMode>{_selectedMode},
+                      onSelectionChanged: (selection) => _switchMode(selection.first),
+                      style: ButtonStyle(
+                        backgroundColor: WidgetStateProperty.resolveWith<Color?>((states) {
+                          if (states.contains(WidgetState.selected)) {
+                            return AppTheme.primary;
+                          }
+                          return Colors.transparent;
+                        }),
+                        foregroundColor: WidgetStateProperty.resolveWith<Color?>((states) {
+                          if (states.contains(WidgetState.selected)) {
+                            return Colors.white;
+                          }
+                          return AppTheme.textSecondary;
+                        }),
+                        side: const WidgetStatePropertyAll(
+                          BorderSide(color: Colors.transparent),
+                        ),
+                        shape: WidgetStatePropertyAll(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
                           ),
                         ),
-                        const SizedBox(height: 8),
+                        textStyle: const WidgetStatePropertyAll(
+                          TextStyle(fontWeight: FontWeight.w600),
+                        ),
+                      ),
+                      segments: <ButtonSegment<TimerMode>>[
+                        ButtonSegment<TimerMode>(
+                          value: TimerMode.focus,
+                          label: Text(_modeLabel(TimerMode.focus)),
+                        ),
+                        ButtonSegment<TimerMode>(
+                          value: TimerMode.shortBreak,
+                          label: Text(_modeLabel(TimerMode.shortBreak)),
+                        ),
+                        ButtonSegment<TimerMode>(
+                          value: TimerMode.longBreak,
+                          label: Text(_modeLabel(TimerMode.longBreak)),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  Expanded(
+                    child: Center(
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          SizedBox(
+                            width: 235,
+                            height: 320,
+                            child: TweenAnimationBuilder<double>(
+                              tween: Tween<double>(begin: 0, end: _progress),
+                              duration: const Duration(milliseconds: 350),
+                              curve: Curves.easeOut,
+                              builder: (context, animatedProgress, _) {
+                                return CircularProgressIndicator(
+                                  value: animatedProgress,
+                                  strokeWidth: 7,
+                                  strokeCap: StrokeCap.round,
+                                  color: ringColor,
+                                  backgroundColor: const Color(0x44FFFFFF),
+                                );
+                              },
+                            ),
+                          ),
+                          Container(
+                            width: 264,
+                            height: 264,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: AppTheme.glass,
+                              border: Border.all(color: AppTheme.border),
+                              boxShadow: const [
+                                BoxShadow(
+                                  color: Color.fromRGBO(2, 44, 34, 0.45),
+                                  blurRadius: 28,
+                                  offset: Offset(0, 14),
+                                ),
+                              ],
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  _formatTime(_remainingSeconds),
+                                  style: textTheme.headlineMedium?.copyWith(
+                                    fontSize: 56,
+                                    fontWeight: FontWeight.w800,
+                                    color: AppTheme.textPrimary,
+                                    letterSpacing: 1,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  _modeLabel(_selectedMode),
+                                  style: textTheme.bodyMedium?.copyWith(
+                                    color: AppTheme.textSecondary,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  GlassContainer(
+                    borderRadius: 22,
+                    child: Column(
+                      children: [
                         Text(
-                          _modeLabel(_selectedMode),
+                          'Focus Session',
+                          style: textTheme.titleMedium?.copyWith(
+                            color: AppTheme.textPrimary,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          'Session $_focusSessionCount of 4',
                           style: textTheme.bodyMedium?.copyWith(
-                            color: AppColors.textSecondary,
-                            fontWeight: FontWeight.w500,
+                            color: AppTheme.textSecondary,
                           ),
                         ),
                       ],
                     ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 24),
-              Text(
-                'Focus Session',
-                style: textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.textPrimary,
-                ),
-              ),
-              const SizedBox(height: 6),
-              Text(
-                'Session $_focusSessionCount of 4',
-                style: textTheme.bodyMedium,
-              ),
-              const SizedBox(height: 30),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    height: 46,
-                    child: ElevatedButton(
-                      onPressed: _startTimer,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(horizontal: 24),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                      ),
-                      child: const Text('Start'),
-                    ),
                   ),
-                  const SizedBox(width: 10),
-                  SizedBox(
-                    height: 46,
-                    child: OutlinedButton(
-                      onPressed: _isRunning ? _pauseTimer : null,
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: AppColors.textPrimary,
-                        padding: const EdgeInsets.symmetric(horizontal: 24),
-                        side: const BorderSide(color: Color(0xFFD1D5DB)),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
+                  const SizedBox(height: 24),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: SizedBox(
+                          height: 50,
+                          child: ElevatedButton(
+                            onPressed: _startTimer,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppTheme.primary,
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(18),
+                              ),
+                              elevation: 0,
+                              textStyle: const TextStyle(
+                                fontWeight: FontWeight.w700,
+                                fontSize: 15,
+                              ),
+                            ),
+                            child: const Text('Start'),
+                          ),
                         ),
                       ),
-                      child: const Text('Pause'),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  SizedBox(
-                    height: 46,
-                    child: OutlinedButton(
-                      onPressed: _resetTimer,
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: AppColors.textPrimary,
-                        padding: const EdgeInsets.symmetric(horizontal: 24),
-                        side: const BorderSide(color: Color(0xFFD1D5DB)),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: _GlassActionButton(
+                          label: 'Pause',
+                          onTap: _isRunning ? _pauseTimer : null,
+                          isEnabled: _isRunning,
                         ),
                       ),
-                      child: const Text('Reset'),
-                    ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: _GlassActionButton(
+                          label: 'Reset',
+                          onTap: _resetTimer,
+                          isEnabled: true,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ],
+            ),
+          ),
+        
+      ),
+    );
+  }
+}
+
+class _GlassActionButton extends StatelessWidget {
+  const _GlassActionButton({
+    required this.label,
+    required this.onTap,
+    required this.isEnabled,
+  });
+
+  final String label;
+  final VoidCallback? onTap;
+  final bool isEnabled;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 50,
+      child: GlassContainer(
+        borderRadius: 18,
+        padding: EdgeInsets.zero,
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(18),
+            onTap: onTap,
+            child: Center(
+              child: Text(
+                label,
+                style: TextStyle(
+                  color: isEnabled ? AppTheme.textPrimary : AppTheme.textSecondary,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 15,
+                ),
+              ),
+            ),
           ),
         ),
       ),
     );
   }
 }
-
 
